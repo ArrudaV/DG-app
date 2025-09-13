@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `contract` ALTER COLUMN `dueDate` DROP DEFAULT,
+    ALTER COLUMN `name` DROP DEFAULT,
+    ALTER COLUMN `value` DROP DEFAULT;

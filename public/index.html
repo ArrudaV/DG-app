@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4a90e2">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="DG - Gestão de Contratos">
+    <title>DG - Gestão de Contratos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Tela de Login/Cadastro -->
+    <div id="auth-screen" class="screen">
+        <div class="back-to-home">
+            <a href="home.html" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Voltar ao início
+            </a>
+        </div>
+        <div class="auth-container">
+
+        <!-- Login -->
+        <div id="login-tab" class="tab-content">
+            <div class="auth-header">
+                <h2>Bem-vindo de volta!</h2>
+                <p>Faça login para acessar sua conta</p>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="login-email" placeholder="Digite seu email" required>
+            </div>
+            <div class="form-group">
+                <label>Senha:</label>
+                <div class="password-input">
+                    <input type="password" id="login-password" placeholder="Digite sua senha" required>
+                    <button type="button" class="password-toggle-native" onclick="togglePasswordVisibility('login-password')" title="Mostrar senha">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.73-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button onclick="login()" class="btn-primary btn-login">Entrar</button>
+            
+            <div class="auth-footer">
+                <div class="user-type-selector">
+                    <label>Tipo de usuário:</label>
+                    <div class="user-type-toggle">
+                        <button type="button" class="user-type-btn active" data-type="employee" onclick="selectUserType('employee')">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Funcionário</span>
+                        </button>
+                        <button type="button" class="user-type-btn" data-type="client" onclick="selectUserType('client')">
+                            <i class="fas fa-user"></i>
+                            <span>Cliente</span>
+                        </button>
+                    </div>
+                    <!-- Campo hidden para compatibilidade com código existente -->
+                    <select id="login-type" style="display: none;">
+                        <option value="employee" selected>Funcionário</option>
+                        <option value="client">Cliente</option>
+                    </select>
+                </div>
+                <div class="register-link">
+                    <p>Não tem uma conta? <a href="#" onclick="showRegisterForm()">Cadastre-se aqui</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cadastro -->
+        <div id="register-tab" class="tab-content hidden">
+            <div class="auth-header">
+                <h2>Criar nova conta</h2>
+                <p>Preencha os dados abaixo para se cadastrar</p>
+            </div>
+            <div class="form-group">
+                <label>Nome Completo:</label>
+                <input type="text" id="register-name" placeholder="Digite seu nome completo" required>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="register-email" placeholder="Digite seu email" required>
+            </div>
+            <div class="form-group">
+                <label>Senha:</label>
+                <div class="password-input">
+                    <input type="password" id="register-password" placeholder="Mínimo 8 caracteres" required>
+                    <button type="button" class="password-toggle-native" onclick="togglePasswordVisibility('register-password')" title="Mostrar senha">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.73-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Confirmar Senha:</label>
+                <div class="password-input">
+                    <input type="password" id="register-confirm-password" placeholder="Digite a senha novamente" required>
+                    <button type="button" class="password-toggle-native" onclick="togglePasswordVisibility('register-confirm-password')" title="Mostrar senha">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.73-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button onclick="register()" class="btn-primary btn-register">Cadastrar Funcionário</button>
+            
+            <div class="auth-footer">
+                <div class="login-link">
+                    <p>Já tem uma conta? <a href="#" onclick="showLoginForm()">Faça login aqui</a></p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Layout Principal -->
+    <div class="main-layout hidden">
+        <!-- Overlay para mobile -->
+        <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+        
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo">DG</div>
+            </div>
+            <ul class="sidebar-nav">
+                <li><a href="#" onclick="showEmployeeTab('dashboard')" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" onclick="showEmployeeTab('contracts')"><i class="fas fa-file-contract"></i> Contratos</a></li>
+                <li><a href="#" onclick="showEmployeeTab('clients')"><i class="fas fa-users"></i> Clientes</a></li>
+                <li><a href="#" onclick="showEmployeeTab('reports')"><i class="fas fa-chart-bar"></i> Relatórios</a></li>
+            </ul>
+        </nav>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Menu">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Buscar contratos ou clientes..." id="main-search">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div id="user-info" class="user-info">
+                        <span id="user-name">Teste Funcionário</span>
+                        <button onclick="logout()" class="logout-btn">Sair</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Principal -->
+            <div id="dashboard-tab" class="tab-content">
+                <div class="dashboard-title">
+                    <h1>Painel de Contratos</h1>
+                </div>
+                
+                <!-- Cards de Estatísticas -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-number" id="active-contracts-count">1</div>
+                        <div class="stat-label">Contratos Ativos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="expiring-contracts-count">1</div>
+                        <div class="stat-label">Vencem em 15 dias</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-value">R$ 0</div>
+                        <div class="stat-label">Total em Valor</div>
+                    </div>
+                </div>
+                
+                <!-- Tabela de Contratos -->
+                <div class="contracts-table-container">
+                    <table class="contracts-table">
+                        <thead>
+                            <tr>
+                                <th>Nome do Contrato</th>
+                                <th>Cliente</th>
+                                <th>Status</th>
+                                <th>Data de Vencimento</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contracts-table-body">
+                            <!-- Contratos serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+
+            <!-- Gestão de Contratos -->
+            <div id="contracts-tab" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>Gestão de Contratos</h2>
+                    <div class="header-actions">
+                        <button onclick="showContractForm()">Novo Contrato</button>
+                    </div>
+                </div>
+
+                <div id="contract-form" class="form-modal hidden">
+                    <div class="modal-content">
+                        <h3 id="contract-form-title">📄 Novo Contrato</h3>
+                        <input type="hidden" id="contract-id" value="">
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <input type="text" id="contract-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição:</label>
+                            <textarea id="contract-description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Cliente:</label>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <select id="contract-client" required style="flex: 1;">
+                                    <option value="">Selecione um cliente</option>
+                                </select>
+                                <button type="button" onclick="loadClientsForContract()" title="Recarregar clientes" style="padding: 8px; border: 1px solid #ccc; background: #f8f9fa; border-radius: 4px; cursor: pointer;">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Valor:</label>
+                            <input type="number" id="contract-value" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Vencimento:</label>
+                            <input type="date" id="contract-expiration-date">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="contract-auto-status" checked>
+                                Status automático baseado na data de vencimento
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select id="contract-status">
+                                <option value="DRAFT">Rascunho</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Arquivo do Contrato:</label>
+                            <input type="file" id="contract-file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        </div>
+                        <div class="form-actions">
+                            <button onclick="saveContract()" id="contract-save-btn">Salvar</button>
+                            <button onclick="hideContractForm()">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="contracts-list" class="list-container">
+                    <!-- Lista de contratos será carregada aqui -->
+                </div>
+            </div>
+
+            <!-- Gestão de Clientes -->
+            <div id="clients-tab" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>Gestão de Clientes</h2>
+                    <div class="header-actions">
+                        <button onclick="showClientForm()">Novo Cliente</button>
+                    </div>
+                </div>
+                
+                <div id="client-form" class="form-modal hidden">
+                    <div class="modal-content">
+                        <h3 id="client-form-title">👥 Novo Cliente</h3>
+                        <input type="hidden" id="client-id" value="">
+                        <div class="form-group">
+                            <label>Nome Completo:</label>
+                            <input type="text" id="client-name" placeholder="Digite o nome completo do cliente" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="client-email" placeholder="Digite o email do cliente" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha:</label>
+                            <div class="password-input">
+                                <input type="password" id="client-password" placeholder="Digite uma senha segura" required>
+                                <button type="button" class="password-toggle-native" onclick="togglePasswordVisibility('client-password')" title="Mostrar senha">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.73-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3-3-1.34-3-3-3z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button onclick="saveClient()" id="client-save-btn">
+                                <i class="fas fa-user-plus"></i>
+                                Criar Cliente
+                            </button>
+                            <button onclick="hideClientForm()">
+                                <i class="fas fa-times"></i>
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="clients-list" class="list-container">
+                    <!-- Lista de clientes será carregada aqui -->
+                </div>
+            </div>
+            
+            <!-- Relatórios e Atividades -->
+            <div id="reports-tab" class="tab-content hidden">
+                <div class="section-header">
+                    <h2>Relatórios e Atividades</h2>
+                </div>
+                
+                <!-- Estatísticas Gerais -->
+                <div class="stats-section">
+                    <h3>Estatísticas Gerais</h3>
+                    <div id="statistics" class="stats-grid">
+                        <!-- Estatísticas serão carregadas aqui -->
+                    </div>
+                </div>
+                
+                <!-- Filtros de Atividades -->
+                <div class="filters-section">
+                    <h3>Filtros de Atividades</h3>
+                    <div class="filters-grid">
+                        <select id="activity-action-filter">
+                            <option value="">Todas as ações</option>
+                            <option value="CREATE">Criação</option>
+                            <option value="UPDATE">Atualização</option>
+                            <option value="DELETE">Exclusão</option>
+                            <option value="LOGIN">Login</option>
+                        </select>
+                        <select id="activity-entity-filter">
+                            <option value="">Todas as entidades</option>
+                            <option value="EMPLOYEE">Funcionários</option>
+                            <option value="CLIENT">Clientes</option>
+                            <option value="CONTRACT">Contratos</option>
+                        </select>
+                        <select id="activity-user-filter">
+                            <option value="">Todos os usuários</option>
+                            <option value="EMPLOYEE">Funcionários</option>
+                            <option value="CLIENT">Clientes</option>
+                        </select>
+                        <button onclick="loadActivities()" class="btn-primary">Filtrar</button>
+                    </div>
+                </div>
+                
+                <!-- Lista de Atividades -->
+                <div class="activities-section">
+                    <h3>Histórico de Atividades</h3>
+                    <div id="activities-list" class="activities-container">
+                        <!-- Atividades serão carregadas aqui -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Dashboard do Cliente -->
+    <div id="client-dashboard" class="screen hidden">
+        <div class="client-dashboard-container">
+            <!-- Header do Cliente -->
+            <div class="client-header">
+                <div class="client-welcome">
+                    <h1>Bem-vindo, <span id="client-name-display">Cliente</span>!</h1>
+                    <p>Gerencie seus contratos e acompanhe o status</p>
+                </div>
+                <div class="client-actions">
+                    <button onclick="logout()" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sair
+                    </button>
+                </div>
+            </div>
+
+            <!-- Estatísticas do Cliente -->
+            <div class="client-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="total-contracts">0</div>
+                        <div class="stat-label">Total de Contratos</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="active-contracts">0</div>
+                        <div class="stat-label">Contratos Ativos</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon expiring">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="expiring-contracts">0</div>
+                        <div class="stat-label">Expirando em 15 dias</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon value">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="client-total-value">R$ 0,00</div>
+                        <div class="stat-label">Valor Total</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros e Busca -->
+            <div class="client-filters">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="client-search" placeholder="Buscar contratos..." onkeyup="filterClientContracts()">
+                </div>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterByStatus('all')">Todos</button>
+                    <button class="filter-btn" onclick="filterByStatus('ACTIVE')">Ativos</button>
+                    <button class="filter-btn" onclick="filterByStatus('EXPIRING')">Expirando</button>
+                    <button class="filter-btn" onclick="filterByStatus('EXPIRED')">Expirados</button>
+                </div>
+            </div>
+
+            <!-- Lista de Contratos -->
+            <div class="client-contracts-section">
+                <h2>Meus Contratos</h2>
+                <div id="client-contracts" class="contracts-grid">
+                    <!-- Contratos do cliente serão carregados aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id            Int           @id @default(autoincrement())
+  name          String
+  email         String        @unique
+  password      String
+  role          String        @default("EMPLOYEE")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  clients       Client[]
+  contracts     Contract[]
+}
+
+model Client {
+  id            Int           @id @default(autoincrement())
+  name          String
+  email         String        @unique
+  password      String
+  createdById   Int
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  createdBy     Employee      @relation(fields: [createdById], references: [id])
+  contracts     Contract[]
+}
+
+model Contract {
+  id            Int       @id @default(autoincrement())
+  name          String
+  description   String?
+  status        ContractStatus @default(DRAFT)
+  value         Float
+  expirationDate DateTime? // Data de expiração do contrato (apenas data)
+  autoStatus    Boolean   @default(true) // Status automático baseado na data de expiração
+  fileUrl       String?   // URL do arquivo do contrato (PDF/Imagem)
+  fileName      String?   // Nome original do arquivo
+  fileType      String?   // Tipo do arquivo (pdf, jpg, png, etc.)
+  employeeId    Int
+  clientId      Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  employee      Employee  @relation(fields: [employeeId], references: [id])
+  client        Client    @relation(fields: [clientId], references: [id])
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRING
+  EXPIRED
+}
+
+model ActivityLog {
+  id          Int           @id @default(autoincrement())
+  action      String        // CREATE, UPDATE, DELETE, LOGIN, LOGOUT
+  entityType  String        // EMPLOYEE, CLIENT, CONTRACT
+  entityId    Int?          // ID da entidade afetada (opcional para LOGIN/LOGOUT)
+  description String        // Descrição detalhada da ação
+  userId      Int           // ID do usuário que executou a ação
+  userRole    String        // EMPLOYEE ou CLIENT
+  userEmail   String        // Email do usuário que executou a ação
+  createdAt   DateTime      @default(now())
+}
+

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DG - Gestão de Documentos Segura</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="home-styles.css">
+  <link rel="icon" href="img/letra-d.png" type="icon">
+  <meta name="description" content="DG é um software de gestão de documentos com armazenamento seguro em nuvem, controle de acesso e auditoria.">
+</head>
+
+<body>
+  <header class="topbar">
+    <a class="brand" href="home.html" aria-label="DG - Página inicial">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="3" y="6" width="18" height="36" rx="4"></rect>
+        <rect x="27" y="6" width="18" height="36" rx="4"></rect>
+        <path d="M11 14h8v4h-8zm0 8h8v4h-8zm0 8h8v4h-8z"></path>
+        <path d="M30 14h9v4h-9zm0 8h9v4h-9zm0 8h9v4h-9z"></path>
+      </svg>
+      <span>DG</span>
+    </a>
+    <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <nav class="nav" data-nav>
+      <a href="home.html">Home</a>
+      <a href="sobre.html" aria-current="page">Sobre</a>
+      <a class="btn" href="index.html">Login</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1><span class="highlight">Gestão de Documentos na Nuvem</h1>
+          <p>Armazene, acesse e compartilhe com segurança.</p></span>
+          <a href="index.html" class="btn-primary">Comece agora</a>
+        </div>
+        <div class="hero-image">
+          <img src="./img/cloud.png" alt="Documentos e nuvem">
+        </div>
+      </div>
+    </section>
+      <section class="header-section">
+      <h1>Sobre a DG</h1>
+      <p>O DG é um software de gestão de documentos que armazena arquivos com segurança e alta disponibilidade em cloud. Ideal para equipes que precisam de organização, rastreabilidade e conformidade.</p>
+    </section>
+
+    <div class="card">
+      <h2>Nosso time e cultura</h2>
+      <div class="carousel">
+        <div class="carousel-images">
+          <img src="./img/img 1.jpg" alt="Equipe trabalhando" class="active">
+          <img src="./img/img 2.jpg" alt="Ambiente de trabalho moderno">
+          <img src="./img/img 3.jpg" alt="Ambiente de trabalho moderno">
+        </div>
+      </div>
+      <p>No DG, promovemos inovação, colaboração e foco na segurança digital. Nossa equipe é apaixonada por soluções
+        escaláveis e confiáveis para gestão de documentos.</p>
+    </div>
+<main class="container">
+ 
+    <section class="grid-container">
+      <div class="card">
+        <h2>Segurança</h2>
+        <ul class="list">
+          <li class="list-item">Criptografia em repouso (AES-256) e em trânsito (TLS).</li>
+          <li class="list-item">Autenticação multifator (MFA) e políticas de senha fortes.</li>
+          <li class="list-item">Controle de acesso por função (RBAC) e logs de auditoria.</li>
+          <li class="list-item">Backups automáticos e retenção configurável.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Fluxo de trabalho</h2>
+        <ol class="list">
+          <li class="list-item">Faça upload ou capture documentos.</li>
+          <li class="list-item">Classifique com tags e pastas inteligentes.</li>
+          <li class="list-item">Compartilhe com permissões específicas.</li>
+          <li class="list-item">Acompanhe versões e histórico de alterações.</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h2>FAQ</h2>
+        <details class="faq-item">
+          <summary>Posso usar no celular?</summary>
+          <p>Sim. O DG é responsivo e funciona em navegadores modernos.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Como é feito o backup?</summary>
+          <p>Backups diários com retenção configurável e redundância geográfica.</p>
+        </details>
+        <details class="faq-item">
+          <summary>O login é seguro?</summary>
+          <p>Sim. Suportamos MFA, proteção contra força bruta e sessões com expiração.</p>
+        </details>
+      </div>
+    </section>
+
+  </main>
+  
+
+ <footer class="footer">
+  <div class="footer-content">
+    <div class="footer-left">
+   
+     <p>
+        Todo projeto começa com uma conversa. Estamos prontos para entender suas necessidades e oferecer soluções para gerenciar seus documentos de forma eficiente e segura na nuvem. Nossa equipe  está à disposição para discutir como podemos ajudar a transformar sua gestão de documentos, garantindo acessibilidade, segurança e praticidade.
+      </p>
+    </div>
+    <div class="footer-right">
+      <ul class="footer-info">
+        <li><strong>Email:</strong> <a href="mailto:hello@buuuk.com">dg@gmail.com</a></li>
+        <li><strong>Telefone:</strong> <a href="tel:+6598735984">(11) 4578 5984</a></li>
+        <li><strong>Endereço:Rua:Gregorio valencio, 165</strong>
+           <p>© <span id="year"></span> DG • Gestão de Documentos em Nuvem</p>
+          
+        </li>
+      </ul>
+    
+    </div>
+  </div>
+</footer>
+  <script src="home-script.js"></script>
+</body>
+
+</html>

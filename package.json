@@ -1,0 +1,52 @@
+{
+  "name": "dgia",
+  "version": "1.0.0",
+  "description": "Sistema de Gestão de Contratos",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "migrate-files": "ts-node src/scripts/migrateFiles.ts",
+    "docker:build": "docker build -t dgia-app:latest .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "deploy:aws": "powershell -ExecutionPolicy Bypass -File deploy-aws.ps1",
+    "deploy:aws-help": "powershell -ExecutionPolicy Bypass -File deploy-aws.ps1 -Help",
+    "fix:docker": "powershell -ExecutionPolicy Bypass -File fix-docker.ps1",
+    "fix:docker-help": "powershell -ExecutionPolicy Bypass -File fix-docker.ps1 -Help",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "contracts",
+    "management",
+    "nodejs",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "winston": "^3.17.0",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.3.0",
+    "prisma": "^6.15.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.2"
+  }
+}
