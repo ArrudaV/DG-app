@@ -180,8 +180,13 @@ app.get('/uploads/:filename', async (req, res) => {
     }
 });
 // Health check
-app.get('/health', (_req, res) => {
-    res.json({ status: 'ok' });
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development'
+    });
 });
 // Rotas da API
 app.use('/auth', authLimiter, auth_1.authRouter);
