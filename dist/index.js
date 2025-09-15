@@ -49,6 +49,112 @@ const reports_1 = require("./routes/reports");
 const dashboard_1 = require("./routes/dashboard");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const fileEncryption_1 = require("./lib/fileEncryption");
+const prisma_1 = require("../generated/prisma");
+// Função para migrar banco de dados
+async function migrateDatabase() {
+    const prisma = new prisma_1.PrismaClient();
+    try {
+        console.log('Verificando schema do banco de dados...');
+        // Verificar se a coluna password existe na tabela Employee
+        const result = await prisma.$queryRaw `
+      SELECT COUNT(*) as count 
+      FROM information_schema.columns 
+      WHERE table_schema = DATABASE() 
+      AND table_name = 'Employee'
+      AND column_name = 'password'
+    `;
+        console.log('Resultado da verificação da coluna password:', result);
+        console.log('Count value:', result[0].count);
+        console.log('Count type:', typeof result[0].count);
+        console.log('Count === 0:', result[0].count === 0);
+        console.log('Count == 0:', result[0].count == 0);
+        // Se a coluna password não existe (count === 0), recriar as tabelas
+        if (result[0].count === 0 || result[0].count == 0) {
+            console.log('Coluna password não encontrada. Schema incompleto detectado. Recriando tabelas...');
+            // Dropar tabelas existentes (em ordem reversa devido às foreign keys)
+            try {
+                await prisma.$executeRaw `DROP TABLE IF EXISTS ActivityLog`;
+                await prisma.$executeRaw `DROP TABLE IF EXISTS Contract`;
+                await prisma.$executeRaw `DROP TABLE IF EXISTS Client`;
+                await prisma.$executeRaw `DROP TABLE IF EXISTS Employee`;
+                console.log('Tabelas antigas removidas.');
+            }
+            catch (error) {
+                console.log('Erro ao remover tabelas antigas (pode ser normal):', error);
+            }
+            // Criar tabela Employee
+            await prisma.$executeRaw `
+        CREATE TABLE Employee (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          role VARCHAR(255) DEFAULT 'EMPLOYEE',
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+      `;
+            // Criar tabela Client
+            await prisma.$executeRaw `
+        CREATE TABLE Client (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL,
+          createdById INT NOT NULL,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          FOREIGN KEY (createdById) REFERENCES Employee(id)
+        )
+      `;
+            // Criar tabela Contract
+            await prisma.$executeRaw `
+        CREATE TABLE Contract (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          description TEXT,
+          status ENUM('DRAFT', 'ACTIVE', 'EXPIRING', 'EXPIRED') DEFAULT 'DRAFT',
+          value DECIMAL(10,2) NOT NULL,
+          expirationDate DATETIME,
+          autoStatus BOOLEAN DEFAULT TRUE,
+          fileUrl VARCHAR(500),
+          fileName VARCHAR(255),
+          fileType VARCHAR(50),
+          employeeId INT NOT NULL,
+          clientId INT NOT NULL,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+          updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          FOREIGN KEY (employeeId) REFERENCES Employee(id),
+          FOREIGN KEY (clientId) REFERENCES Client(id)
+        )
+      `;
+            // Criar tabela ActivityLog
+            await prisma.$executeRaw `
+        CREATE TABLE ActivityLog (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          action VARCHAR(50) NOT NULL,
+          entityType VARCHAR(50) NOT NULL,
+          entityId INT,
+          description TEXT NOT NULL,
+          userId INT NOT NULL,
+          userRole VARCHAR(50) NOT NULL,
+          userEmail VARCHAR(255) NOT NULL,
+          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+      `;
+            console.log('Schema recriado com sucesso!');
+        }
+        else {
+            console.log('Schema já está correto.');
+        }
+    }
+    catch (error) {
+        console.error('Erro ao migrar banco de dados:', error);
+    }
+    finally {
+        await prisma.$disconnect();
+    }
+}
 const app = (0, express_1.default)();
 // Configuração de rate limiting (EXCLUINDO HEALTH CHECKS)
 const limiter = (0, express_rate_limit_1.default)({
@@ -79,7 +185,8 @@ app.use(limiter);
 // Configuração do multer para upload de arquivos
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../uploads'));
+        // Usar o diretório EFS montado
+        cb(null, '/opt/dg/dg-uploads');
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -123,7 +230,7 @@ app.use(express_1.default.static(path.join(__dirname, '../public')));
 app.get('/uploads/:filename', async (req, res) => {
     try {
         const filename = req.params.filename;
-        const filePath = path.join(__dirname, '../uploads', filename);
+        const filePath = path.join('/opt/dg/dg-uploads', filename);
         // Verificar se o arquivo existe
         const fs = await Promise.resolve().then(() => __importStar(require('fs/promises')));
         try {
@@ -293,8 +400,21 @@ app.use(errorHandler_1.notFoundHandler);
 app.use(errorHandler_1.errorHandler);
 const PORT = parseInt(process.env.PORT || '3000');
 const HOST = process.env.HOST || '0.0.0.0';
-app.listen(PORT, HOST, () => {
-    console.log(`API rodando na porta ${PORT}`);
-    console.log(`Interface web disponível em: http://${HOST}:${PORT}`);
-});
+// Inicializar servidor com migração do banco de dados
+async function startServer() {
+    try {
+        console.log('Iniciando migração do banco de dados...');
+        await migrateDatabase();
+        console.log('Migração concluída. Iniciando servidor...');
+        app.listen(PORT, HOST, () => {
+            console.log(`API rodando na porta ${PORT}`);
+            console.log(`Interface web disponível em: http://${HOST}:${PORT}`);
+        });
+    }
+    catch (error) {
+        console.error('Erro ao iniciar servidor:', error);
+        process.exit(1);
+    }
+}
+startServer();
 //# sourceMappingURL=index.js.map
