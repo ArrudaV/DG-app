@@ -1,0 +1,41 @@
+[
+  {
+    "name": "dg-app",
+    "image": "570322735022.dkr.ecr.us-east-1.amazonaws.com/dg-app:latest",
+    "portMappings": [
+      {
+        "containerPort": 3000,
+        "protocol": "tcp"
+      }
+    ],
+    "essential": true,
+    "environment": [
+      {
+        "name": "PORT",
+        "value": "3000"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "DATABASE_URL",
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:DATABASE_URL-FCZQpj"
+      },
+      {
+        "name": "JWT_SECRET",
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:JWT_SECRET-wToXi5"
+      },
+      {
+        "name": "FILE_ENCRYPTION_PASSWORD",
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:FILE_ENCRYPTION_PASSWORD-2VzQmb"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "/ecs/dg-app",
+        "awslogs-region": "us-east-1",
+        "awslogs-stream-prefix": "dg"
+      }
+    }
+  }
+]
