@@ -895,16 +895,16 @@ aws efs describe-access-points --file-system-id fs-xxxxxxxx
 4. **Na seção "Container definitions":**
    - **Clique em "Add container"**
    - **Container name:** `dg-app`
-   - **Image URI:** `ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/dg-app:latest`
+   - **Image URI:** `570322735022.dkr.ecr.us-east-1.amazonaws.com/dg-app:latest`
    - **Port mappings:**
      - **Container port:** 3000
      - **Protocol:** TCP
    - **Environment variables:**
      - **PORT:** 3000
    - **Secrets (adicione estas):**
-     - **DATABASE_URL:** `arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:DATABASE_URL`
-     - **JWT_SECRET:** `arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:JWT_SECRET`
-     - **FILE_ENCRYPTION_PASSWORD:** `arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:FILE_ENCRYPTION_PASSWORD`
+     - **DATABASE_URL:** `arn:aws:secretsmanager:us-east-1:570322735022:secret:DATABASE_URL`
+     - **JWT_SECRET:** `arn:aws:secretsmanager:us-east-1:570322735022:secret:JWT_SECRET`
+     - **FILE_ENCRYPTION_PASSWORD:** `arn:aws:secretsmanager:us-east-1:570322735022:secret:FILE_ENCRYPTION_PASSWORD`
    - **Logging:**
      - **Log driver:** awslogs
      - **Log group:** `/ecs/dg-app`
@@ -1336,12 +1336,12 @@ jobs:
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/dg-ecs-task-execution-role",
-  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/dg-ecs-task-role",
+  "executionRoleArn": "arn:aws:iam::570322735022:role/dg-ecs-task-execution-role",
+  "taskRoleArn": "arn:aws:iam::570322735022:role/dg-ecs-task-role",
   "containerDefinitions": [
     {
       "name": "dg-app",
-      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/dg-app:latest",
+      "image": "570322735022.dkr.ecr.us-east-1.amazonaws.com/dg-app:latest",
       "portMappings": [
         {
           "containerPort": 3000,
@@ -1358,22 +1358,22 @@ jobs:
       "secrets": [
         {
           "name": "DATABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:DATABASE_URL"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:DATABASE_URL"
         },
         {
           "name": "JWT_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:JWT_SECRET"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:JWT_SECRET"
         },
         {
           "name": "FILE_ENCRYPTION_PASSWORD",
-          "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:FILE_ENCRYPTION_PASSWORD"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:FILE_ENCRYPTION_PASSWORD"
         }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/dg-app",
-          "awslogs-region": "REGION",
+          "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "dg"
         }
       },
@@ -1390,10 +1390,10 @@ jobs:
     {
       "name": "uploads",
       "efsVolumeConfiguration": {
-        "fileSystemId": "fs-XXXXXXXX",
+        "fileSystemId": "fs-0f3df0710e3bcdca8",
         "transitEncryption": "ENABLED",
         "authorizationConfig": {
-          "accessPointId": "fsap-XXXXXXXX",
+          "accessPointId": "fsap-01f860ec94c69b370",
           "iam": "ENABLED"
         }
       }
@@ -1403,10 +1403,10 @@ jobs:
 ```
 
 2. **Substitua** os valores:
-   - `ACCOUNT_ID`: Seu Account ID da AWS
-   - `REGION`: Sua região AWS
-   - `fs-XXXXXXXX`: ID do seu EFS
-   - `fsap-XXXXXXXX`: ID do seu Access Point
+   - `ACCOUNT_ID`: 570322735022
+   - `REGION`: us-east-1
+   - `fs-XXXXXXXX`: fs-0f3df0710e3bcdca8
+   - `fsap-XXXXXXXX`: fsap-01f860ec94c69b370
 3. **Clique em "Commit changes"**
 
 ### **8.4 Testar o Workflow**
@@ -1852,13 +1852,13 @@ aws elbv2 describe-listeners --load-balancer-arn ALB_ARN
 ### **EFS Commands**
 ```bash
 # Descrever file system
-aws efs describe-file-systems --file-system-id fs-XXXXXXXX
+aws efs describe-file-systems --file-system-id fs-0f3df0710e3bcdca8
 
 # Listar mount targets
-aws efs describe-mount-targets --file-system-id fs-XXXXXXXX
+aws efs describe-mount-targets --file-system-id fs-0f3df0710e3bcdca8
 
 # Descrever access points
-aws efs describe-access-points --file-system-id fs-XXXXXXXX
+aws efs describe-access-points --file-system-id fs-0f3df0710e3bcdca8
 ```
 
 ---
@@ -2149,27 +2149,27 @@ aws cloudwatch get-metric-statistics \
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
   "memory": "1024",
-  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/dgTaskRole",
+  "executionRoleArn": "arn:aws:iam::570322735022:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::570322735022:role/dgTaskRole",
   "containerDefinitions": [
     {
       "name": "dg-app",
-      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/dg-app:latest",
+      "image": "570322735022.dkr.ecr.us-east-1.amazonaws.com/dg-app:latest",
       "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
       "essential": true,
       "environment": [
         { "name": "PORT", "value": "3000" }
       ],
       "secrets": [
-        { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:DATABASE_URL" },
-        { "name": "JWT_SECRET", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:JWT_SECRET" },
-        { "name": "FILE_ENCRYPTION_PASSWORD", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:FILE_ENCRYPTION_PASSWORD" }
+        { "name": "DATABASE_URL", "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:DATABASE_URL" },
+        { "name": "JWT_SECRET", "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:JWT_SECRET" },
+        { "name": "FILE_ENCRYPTION_PASSWORD", "valueFrom": "arn:aws:secretsmanager:us-east-1:570322735022:secret:FILE_ENCRYPTION_PASSWORD" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/dg-app",
-          "awslogs-region": "REGION",
+          "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "dg"
         }
       },
@@ -2186,10 +2186,10 @@ aws cloudwatch get-metric-statistics \
     {
       "name": "uploads",
       "efsVolumeConfiguration": {
-        "fileSystemId": "fs-XXXXXXXX",
+        "fileSystemId": "fs-0f3df0710e3bcdca8",
         "transitEncryption": "ENABLED",
         "authorizationConfig": {
-          "accessPointId": "fsap-XXXXXXXX",
+          "accessPointId": "fsap-01f860ec94c69b370",
           "iam": "ENABLED"
         }
       }
