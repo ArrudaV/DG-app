@@ -173,6 +173,16 @@ app.get('/ok', (req, res) => {
   res.status(200).send('ok');
 });
 
+// Debug endpoint
+app.get('/debug', (req, res) => {
+  console.log('Debug endpoint called');
+  res.status(200).json({ 
+    message: 'Debug endpoint working',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 // Simple test endpoint
 app.get('/test', (req, res) => {
   res.status(200).json({ message: 'Test endpoint working!' });
