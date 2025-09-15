@@ -179,14 +179,9 @@ app.get('/uploads/:filename', async (req, res) => {
         res.status(500).json({ message: 'Erro interno do servidor' });
     }
 });
-// Health check
+// Health check - simplified for ALB
 app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        environment: process.env.NODE_ENV || 'development'
-    });
+    res.status(200).send('OK');
 });
 // Simple test endpoint
 app.get('/test', (req, res) => {
