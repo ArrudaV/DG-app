@@ -158,6 +158,11 @@ app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
+// Even simpler health check
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 // Simple test endpoint
 app.get('/test', (req, res) => {
   res.status(200).json({ message: 'Test endpoint working!' });
