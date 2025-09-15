@@ -14,7 +14,7 @@ import { FileEncryption } from './lib/fileEncryption';
 
 const app = express();
 
-// Configuração de rate limiting
+// Configuração de rate limiting (EXCLUINDO HEALTH CHECKS)
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutos
   max: process.env.NODE_ENV === 'development' ? 1000 : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // 1000 em dev, 100 em produção
@@ -23,6 +23,11 @@ const limiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // Pular rate limiting para health checks
+    const healthCheckPaths = ['/health', '/ping', '/alive', '/ok', '/debug', '/status', '/test'];
+    return healthCheckPaths.includes(req.path);
+  }
 });
 
 // Rate limiting mais restritivo para autenticação
@@ -183,18 +188,15 @@ app.get('/debug', (req, res) => {
   });
 });
 
+// Ultra simple endpoint for ALB
+app.get('/status', (req, res) => {
+  console.log('Status endpoint called');
+  res.status(200).send('OK');
+});
+
 // Simple test endpoint
 app.get('/test', (req, res) => {
   res.status(200).json({ message: 'Test endpoint working!' });
-});
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.status(200).json({ 
-    message: 'DG Application is running!',
-    timestamp: new Date().toISOString(),
-    status: 'OK'
-  });
 });
 
 // Rotas da API
@@ -250,7 +252,7 @@ app.post('/upload', upload.single('contractFile'), async (req: Request, res: Res
   }
 });
 
-// Rota para servir a página principal
+// Rota para servir a página principal (APENAS UMA ROTA "/")
 app.get('/', (_req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });

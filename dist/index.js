@@ -50,7 +50,7 @@ const dashboard_1 = require("./routes/dashboard");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const fileEncryption_1 = require("./lib/fileEncryption");
 const app = (0, express_1.default)();
-// Configuração de rate limiting
+// Configuração de rate limiting (EXCLUINDO HEALTH CHECKS)
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutos
     max: process.env.NODE_ENV === 'development' ? 1000 : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // 1000 em dev, 100 em produção
@@ -59,6 +59,11 @@ const limiter = (0, express_rate_limit_1.default)({
     },
     standardHeaders: true,
     legacyHeaders: false,
+    skip: (req) => {
+        // Pular rate limiting para health checks
+        const healthCheckPaths = ['/health', '/ping', '/alive', '/ok', '/debug', '/status', '/test'];
+        return healthCheckPaths.includes(req.path);
+    }
 });
 // Rate limiting mais restritivo para autenticação
 const authLimiter = (0, express_rate_limit_1.default)({
@@ -204,17 +209,14 @@ app.get('/debug', (req, res) => {
         uptime: process.uptime()
     });
 });
+// Ultra simple endpoint for ALB
+app.get('/status', (req, res) => {
+    console.log('Status endpoint called');
+    res.status(200).send('OK');
+});
 // Simple test endpoint
 app.get('/test', (req, res) => {
     res.status(200).json({ message: 'Test endpoint working!' });
-});
-// Root endpoint
-app.get('/', (req, res) => {
-    res.status(200).json({
-        message: 'DG Application is running!',
-        timestamp: new Date().toISOString(),
-        status: 'OK'
-    });
 });
 // Rotas da API
 app.use('/auth', authLimiter, auth_1.authRouter);
@@ -265,7 +267,7 @@ app.post('/upload', upload.single('contractFile'), async (req, res) => {
         res.status(500).json({ message: 'Erro ao fazer upload do arquivo' });
     }
 });
-// Rota para servir a página principal
+// Rota para servir a página principal (APENAS UMA ROTA "/")
 app.get('/', (_req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });

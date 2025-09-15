@@ -13,8 +13,8 @@ RUN npx prisma generate \
 FROM node:18-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-# Dependências nativas do Prisma
-RUN apk add --no-cache openssl
+# Dependências nativas do Prisma e curl para health checks
+RUN apk add --no-cache openssl curl
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
