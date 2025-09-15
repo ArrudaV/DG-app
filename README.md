@@ -1,12 +1,13 @@
-# 🏢 DGIA - Sistema de Gestão de Contratos
+# 🏢 DG App - Sistema de Gestão de Contratos
 
-Sistema completo de gestão de contratos com interface responsiva, autenticação segura e criptografia de arquivos.
+Sistema completo de gestão de contratos com interface responsiva, autenticação segura e criptografia de arquivos. Deployado na AWS com arquitetura cloud-native.
 
 ## 📋 Índice
 
 - [Visão Geral](#-visão-geral)
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias](#-tecnologias)
+- [Infraestrutura AWS](#-infraestrutura-aws)
 - [Instalação](#-instalação)
 - [Configuração](#-configuração)
 - [Uso](#-uso)
@@ -15,11 +16,12 @@ Sistema completo de gestão de contratos com interface responsiva, autenticaçã
 - [Responsividade](#-responsividade)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Scripts](#-scripts)
+- [Deploy AWS](#-deploy-aws)
 - [Contribuição](#-contribuição)
 
 ## 🎯 Visão Geral
 
-O DGIA é um sistema web completo para gestão de contratos, desenvolvido com foco em segurança, usabilidade e responsividade. O sistema permite que funcionários gerenciem clientes e contratos, enquanto os clientes podem visualizar seus próprios contratos e baixar arquivos relacionados.
+O DG App é um sistema web completo para gestão de contratos, desenvolvido com foco em segurança, usabilidade e responsividade. O sistema permite que funcionários gerenciem clientes e contratos, enquanto os clientes podem visualizar seus próprios contratos e baixar arquivos relacionados. Deployado na AWS com arquitetura cloud-native para alta disponibilidade e escalabilidade.
 
 ### ✨ Principais Características
 
@@ -31,6 +33,9 @@ O DGIA é um sistema web completo para gestão de contratos, desenvolvido com fo
 - 🔍 **Busca avançada** em todas as seções
 - 📄 **Upload de arquivos** (PDF, imagens) com validação
 - 📈 **Relatórios e histórico** de atividades
+- ☁️ **Deploy na AWS** com arquitetura cloud-native
+- 🚀 **Alta disponibilidade** e escalabilidade automática
+- 🔒 **Segurança enterprise** com HTTPS e isolamento de rede
 
 ## 🚀 Funcionalidades
 
@@ -100,6 +105,74 @@ O DGIA é um sistema web completo para gestão de contratos, desenvolvido com fo
 - **CORS** - Controle de acesso
 - **Validação de entrada** - Sanitização de dados
 
+### Infraestrutura AWS
+- **ECS Fargate** - Containerização serverless
+- **Application Load Balancer** - Distribuição de tráfego
+- **CloudFront** - CDN global + HTTPS
+- **RDS MySQL** - Banco de dados gerenciado
+- **EFS** - Armazenamento de arquivos
+- **Secrets Manager** - Gerenciamento de credenciais
+- **VPC** - Rede isolada e segura
+
+## ☁️ Infraestrutura AWS
+
+O DG App está deployado na AWS com uma arquitetura cloud-native moderna e escalável:
+
+### 🏗️ Arquitetura
+
+```
+Internet → CloudFront → ALB → ECS Fargate → RDS MySQL
+                    ↓
+                 EFS (Storage)
+```
+
+### 🔧 Componentes
+
+| Serviço | Função | Status |
+|---------|--------|--------|
+| **ECS Fargate** | Aplicação containerizada | ✅ Ativo |
+| **ALB** | Load Balancer | ✅ Ativo |
+| **CloudFront** | CDN + HTTPS | ✅ Ativo |
+| **RDS MySQL** | Banco de dados | ✅ Ativo |
+| **EFS** | Armazenamento de arquivos | ✅ Ativo |
+| **Secrets Manager** | Credenciais seguras | ✅ Ativo |
+| **VPC** | Rede isolada | ✅ Ativo |
+
+### 🌐 URLs de Acesso
+
+- **Produção (HTTPS):** `https://d2zuijdq7u12s1.cloudfront.net/`
+- **Backup (HTTP):** `http://dg-alb-175722117.us-east-1.elb.amazonaws.com/`
+
+### 💰 Custos
+
+**Estimativa mensal: $45-50 USD**
+- ECS Fargate: $15-20
+- ALB: $16
+- RDS MySQL: $13
+- EFS: $0.30
+- CloudFront: $0.085
+- Secrets Manager: $0.40
+
+### 🔒 Segurança
+
+- ✅ **HTTPS obrigatório** (CloudFront)
+- ✅ **VPC isolada** com subnets públicas/privadas
+- ✅ **Security Groups** restritivos
+- ✅ **Secrets Manager** para credenciais
+- ✅ **Criptografia** em repouso e trânsito
+- ✅ **Rate Limiting** nas APIs
+
+### 📊 Monitoramento
+
+- **CloudWatch Logs:** `/ecs/dg-app`
+- **Health Checks:** `/status`
+- **Métricas automáticas** de performance
+
+Para mais detalhes, consulte:
+- [📋 Resumo da Infraestrutura](RESUMO_INFRAESTRUTURA.md)
+- [🏗️ Documentação Completa](INFRAESTRUTURA_AWS.md)
+- [🛠️ Comandos AWS](COMANDOS_AWS.md)
+
 ## 📦 Instalação
 
 ### Pré-requisitos
@@ -110,7 +183,7 @@ O DGIA é um sistema web completo para gestão de contratos, desenvolvido com fo
 ### 1. Clone o repositório
 ```bash
 git clone <url-do-repositorio>
-cd dgia
+cd dg-app
 ```
 
 ### 2. Instale as dependências
@@ -121,7 +194,7 @@ npm install
 ### 3. Configure o banco de dados
 ```bash
 # Configure a variável DATABASE_URL no arquivo .env
-# Exemplo: DATABASE_URL="mysql://usuario:senha@localhost:3306/dgia"
+# Exemplo: DATABASE_URL="mysql://usuario:senha@localhost:3306/dg_contracts"
 
 # Execute as migrações
 npx prisma migrate dev
@@ -150,7 +223,7 @@ Crie um arquivo `.env` na raiz do projeto:
 
 ```env
 # Banco de Dados
-DATABASE_URL="mysql://usuario:senha@localhost:3306/dgia"
+DATABASE_URL="mysql://usuario:senha@localhost:3306/dg_contracts"
 
 # Autenticação
 JWT_SECRET="sua_chave_secreta_jwt_muito_segura_aqui_123456789"
@@ -338,7 +411,7 @@ O sistema foi desenvolvido com abordagem **mobile-first** e é completamente res
 ## 📁 Estrutura do Projeto
 
 ```
-dgia/
+dg-app/
 ├── src/                          # Código fonte TypeScript
 │   ├── index.ts                  # Servidor principal
 │   ├── lib/                      # Bibliotecas e utilitários
@@ -402,6 +475,41 @@ npx prisma studio         # Interface visual do banco
 npm run migrate-files     # Migra arquivos existentes para criptografia
 ```
 
+## 🚀 Deploy AWS
+
+### Deploy Automático
+
+O sistema está configurado para deploy automático na AWS:
+
+```bash
+# Build e Deploy
+npm run build
+docker build -t dg-app .
+docker tag dg-app:latest 570322735022.dkr.ecr.us-east-1.amazonaws.com/dg-app:latest
+docker push 570322735022.dkr.ecr.us-east-1.amazonaws.com/dg-app:latest
+aws ecs register-task-definition --cli-input-json file://.aws/ecs/task-definition.json
+aws ecs update-service --cluster dg-cluster --service dg-service --force-new-deployment
+```
+
+### Verificação de Status
+
+```bash
+# Status do ECS
+aws ecs describe-services --cluster dg-cluster --services dg-service
+
+# Health dos targets
+aws ecs list-tasks --cluster dg-cluster --service-name dg-service
+
+# Logs da aplicação
+aws logs get-log-events --log-group-name "/ecs/dg-app" --log-stream-name "dg/dg-app/{task-id}"
+```
+
+### Comandos Úteis
+
+Para comandos detalhados de gerenciamento da infraestrutura AWS, consulte:
+- [🛠️ Comandos AWS](COMANDOS_AWS.md)
+- [🏗️ Infraestrutura Completa](INFRAESTRUTURA_AWS.md)
+
 ## 🤝 Contribuição
 
 1. Faça um fork do projeto
@@ -431,3 +539,19 @@ Para suporte e dúvidas:
 ---
 
 **Desenvolvido com ❤️ para gestão eficiente de contratos**
+
+---
+
+## 📚 Documentação Adicional
+
+- [📋 Resumo da Infraestrutura](RESUMO_INFRAESTRUTURA.md) - Visão geral para apresentação
+- [🏗️ Infraestrutura AWS Completa](INFRAESTRUTURA_AWS.md) - Documentação técnica detalhada
+- [🛠️ Comandos AWS](COMANDOS_AWS.md) - Comandos práticos para gerenciamento
+
+## 🎯 Status do Projeto
+
+- ✅ **Desenvolvimento:** Concluído
+- ✅ **Deploy AWS:** Ativo em produção
+- ✅ **Testes:** Funcionando 100%
+- ✅ **Documentação:** Completa
+- ✅ **Pronto para:** Apresentação TCC
