@@ -187,6 +187,10 @@ app.get('/health', (req, res) => {
 app.get('/ping', (req, res) => {
     res.status(200).send('pong');
 });
+// Always return 200 for ALB
+app.get('/alive', (req, res) => {
+    res.status(200).send('alive');
+});
 // Simple test endpoint
 app.get('/test', (req, res) => {
     res.status(200).json({ message: 'Test endpoint working!' });
