@@ -1,5 +1,5 @@
 {
-  "family": "dg-task",
+  "family": "dg-app-basic",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "512",
@@ -21,6 +21,10 @@
         {
           "name": "PORT",
           "value": "3000"
+        },
+        {
+          "name": "NODE_ENV",
+          "value": "production"
         }
       ],
       "secrets": [
@@ -44,34 +48,8 @@
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "dg"
         }
-      },
-      "mountPoints": [
-        {
-          "sourceVolume": "uploads",
-          "containerPath": "/opt/dg/dg-uploads",
-          "readOnly": false
-        }
-      ],
-      "healthCheck": {
-        "command": ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 60
-      }
-    }
-  ],
-  "volumes": [
-    {
-      "name": "uploads",
-      "efsVolumeConfiguration": {
-        "fileSystemId": "fs-0f3df0710e3bcdca8",
-        "transitEncryption": "ENABLED",
-        "authorizationConfig": {
-          "accessPointId": "fsap-01f860ec94c69b370",
-          "iam": "ENABLED"
-        }
       }
     }
   ]
 }
+

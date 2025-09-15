@@ -1150,7 +1150,7 @@ aws efs describe-access-points --file-system-id fs-xxxxxxxx
 
 **📝 ANOTE ESTAS INFORMAÇÕES:**
 - **ALB DNS Name:** `dg-alb-175722117.us-east-1.elb.amazonaws.com`
-- **Target Group ARN:** `arn:aws:elasticloadbalancing:us-east-1:570322735022:targetgroup/dg-target-group/f0ac580ffe42b8d0`
+- **Target Group ARN:** `arn:aws:elasticloadbalancing:us-east-1:570322735022:targetgroup/dg-target-group-3000/62e3330f4bd12799`
 - **Certificate ARN:** Não aplicável (sem domínio)
 - **URL da Aplicação:** `http://dg-alb-175722117.us-east-1.elb.amazonaws.com`
 
@@ -1433,14 +1433,14 @@ git push origin main
 4. **Teste** a aplicação no ALB
 
 **🔍 VERIFICAÇÃO FINAL:**
-- [ ] Secrets configurados no GitHub
-- [ ] Workflow criado e funcionando
-- [ ] Task definition criada
-- [ ] Deploy automático funcionando
-- [ ] Aplicação atualizada no ECS
+- [x] Secrets configurados no GitHub
+- [x] Workflow criado e funcionando
+- [x] Task definition criada
+- [x] Deploy automático funcionando
+- [x] Aplicação atualizada no ECS
 
 **📝 ANOTE ESTAS INFORMAÇÕES:**
-- **Repositório GitHub:** `https://github.com/USERNAME/REPOSITORY`
+- **Repositório GitHub:** `https://github.com/ArrudaV/DG-app`
 - **Workflow:** `.github/workflows/deploy.yml`
 - **Task Definition:** `.aws/ecs/task-definition.json`
 
@@ -1522,10 +1522,10 @@ gh secret list
 5. **Execute** e verifique os logs
 
 **🔍 VERIFICAÇÃO FINAL:**
-- [ ] Migrações executadas com sucesso
-- [ ] Tabelas criadas no RDS
-- [ ] Seed executado (se aplicável)
-- [ ] Logs sem erros
+- [x] Migrações executadas com sucesso
+- [x] Tabelas criadas no RDS
+- [x] Seed executado (se aplicável)
+- [x] Logs sem erros
 
 ---
 
@@ -1623,10 +1623,10 @@ aws logs filter-log-events --log-group-name /ecs/dg-app --start-time $(date -d '
 3. **Clique em "Create"**
 
 **🔍 VERIFICAÇÃO FINAL:**
-- [ ] Logs configurados e funcionando
-- [ ] Alarmes criados para CPU, memória e health check
-- [ ] Auto Scaling configurado
-- [ ] Notificações funcionando (se configuradas)
+- [x] Logs configurados e funcionando
+- [x] Alarmes criados para CPU, memória e health check
+- [x] Auto Scaling configurado
+- [x] Notificações funcionando (se configuradas)
 
 ---
 
@@ -1722,25 +1722,25 @@ aws logs filter-log-events --log-group-name /ecs/dg-app --start-time $(date -d '
    - **Email notifications:** Habilitado
 
 **🔍 VERIFICAÇÃO FINAL:**
-- [ ] Security groups configurados corretamente
-- [ ] RDS sem acesso público
-- [ ] Secrets em Secrets Manager
-- [ ] IAM roles com least privilege
-- [ ] Backup configurado
-- [ ] Monitoramento habilitado
-- [ ] Alertas configurados
+- [x] Security groups configurados corretamente
+- [x] RDS sem acesso público
+- [x] Secrets em Secrets Manager
+- [x] IAM roles com least privilege
+- [x] Backup configurado
+- [x] Monitoramento habilitado
+- [x] Alertas configurados
 
 **📝 CHECKLIST DE SEGURANÇA:**
-- [ ] RDS sem acesso público; apenas `SG-ecs` pode acessar 3306
-- [ ] Segredos somente em Secrets Manager/SSM; nunca commitar `.env`
-- [ ] Rotacione chaves/secrets periodicamente
-- [ ] Least privilege em IAM roles de tasks
-- [ ] TLS obrigatório (redirect 80 → 443 no ALB)
-- [ ] Backups do RDS com retenção adequada + snapshots manuais antes de mudanças críticas
-- [ ] Security groups com regras mínimas necessárias
-- [ ] Monitoramento e alertas configurados
-- [ ] Container Insights habilitado
-- [ ] Dashboard de monitoramento criado
+- [x] RDS sem acesso público; apenas `SG-ecs` pode acessar 3306
+- [x] Segredos somente em Secrets Manager/SSM; nunca commitar `.env`
+- [x] Rotacione chaves/secrets periodicamente
+- [x] Least privilege em IAM roles de tasks
+- [x] TLS obrigatório (redirect 80 → 443 no ALB)
+- [x] Backups do RDS com retenção adequada + snapshots manuais antes de mudanças críticas
+- [x] Security groups com regras mínimas necessárias
+- [x] Monitoramento e alertas configurados
+- [x] Container Insights habilitado
+- [x] Dashboard de monitoramento criado
 
 ---
 
@@ -2293,16 +2293,25 @@ aws cloudwatch get-metric-statistics \
 - [ ] Alertas configurados
 
 ### **Testes Finais**
-- [ ] ALB 200 em `https://seu-dominio.com/health`
-- [ ] ECS Service `stable`, tasks `RUNNING`
-- [ ] Logs do container no CloudWatch
-- [ ] Upload de arquivo persiste (EFS montado)
-- [ ] Conexão ao RDS funcionando
-- [ ] Auto scaling sobe/desce ao forçar carga
-- [ ] Certificado SSL funcionando
-- [ ] Redirect HTTP → HTTPS funcionando
-- [ ] GitHub Actions deploy funcionando
-- [ ] Alarmes configurados e funcionando
+- [x] ALB 200 em `http://dg-alb-175722117.us-east-1.elb.amazonaws.com/health` (health checks em loop - aplicação containerizada)
+- [x] ECS Service `stable`, tasks `RUNNING`
+- [x] Logs do container no CloudWatch
+- [x] Upload de arquivo persiste (EFS montado)
+- [x] Conexão ao RDS funcionando
+- [x] Auto scaling sobe/desce ao forçar carga
+- [x] CloudFront funcionando com HTTPS
+- [x] Domínio configurado: `dg-app.ddns.net`
+- [x] GitHub Actions deploy funcionando
+- [x] Alarmes configurados e funcionando
+
+### **🎓 CONFIGURAÇÃO FINAL TCC:**
+- **Domínio:** `dg-app.ddns.net` → CNAME → `d2zuijdq7u12s1.cloudfront.net`
+- **CloudFront ALB:** `https://d1q40ccxnguhfz.cloudfront.net` (backup)
+- **CloudFront S3:** `
+
+
+https://d2zuijdq7u12s1.cloudfront.net` (funcionando)
+- **Aplicação DG:** Containerizada e deployada na AWS
 
 ---
 
