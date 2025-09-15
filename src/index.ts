@@ -168,6 +168,11 @@ app.get('/alive', (req, res) => {
   res.status(200).send('alive');
 });
 
+// Super simple endpoint for ALB
+app.get('/ok', (req, res) => {
+  res.status(200).send('ok');
+});
+
 // Simple test endpoint
 app.get('/test', (req, res) => {
   res.status(200).json({ message: 'Test endpoint working!' });
