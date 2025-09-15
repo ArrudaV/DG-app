@@ -18,6 +18,7 @@ RUN apk add --no-cache openssl
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/generated ./generated
 # Porta padrão do app
 EXPOSE 3000
 CMD ["node", "dist/index.js"]
