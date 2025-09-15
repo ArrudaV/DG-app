@@ -163,6 +163,20 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Simple test endpoint
+app.get('/test', (req, res) => {
+  res.status(200).json({ message: 'Test endpoint working!' });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({ 
+    message: 'DG Application is running!',
+    timestamp: new Date().toISOString(),
+    status: 'OK'
+  });
+});
+
 // Rotas da API
 app.use('/auth', authLimiter, authRouter);
 app.use('/clients', clientsRouter);
