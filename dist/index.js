@@ -159,7 +159,7 @@ const app = (0, express_1.default)();
 // Configuração de rate limiting (EXCLUINDO HEALTH CHECKS)
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutos
-    max: process.env.NODE_ENV === 'development' ? 1000 : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // 1000 em dev, 100 em produção
+    max: process.env.NODE_ENV === 'development' ? 50000 : parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '50000'), // 50000 em dev, 50000 em produção
     message: {
         error: 'Muitas tentativas. Tente novamente em alguns minutos.'
     },
@@ -174,7 +174,7 @@ const limiter = (0, express_rate_limit_1.default)({
 // Rate limiting mais restritivo para autenticação
 const authLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000, // 15 minutos
-    max: process.env.NODE_ENV === 'development' ? 200 : 5, // 200 tentativas em dev, 5 em produção
+    max: process.env.NODE_ENV === 'development' ? 1000 : 500, // 1000 tentativas em dev, 500 em produção
     message: {
         error: 'Muitas tentativas de login. Tente novamente em 15 minutos.'
     },

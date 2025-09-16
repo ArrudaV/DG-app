@@ -1180,6 +1180,59 @@ async function register() {
  * - Remove token e usuário do localStorage
  * - Retorna para tela de autenticação
  */
+
+/**
+ * Função para controlar o dropdown do usuário
+ */
+function toggleUserMenu() {
+    const dropdown = document.getElementById('user-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        
+        // Fechar dropdown ao clicar fora
+        if (dropdown.classList.contains('show')) {
+            document.addEventListener('click', closeUserMenuOnClickOutside);
+        } else {
+            document.removeEventListener('click', closeUserMenuOnClickOutside);
+        }
+    }
+}
+
+/**
+ * Fechar dropdown ao clicar fora
+ */
+function closeUserMenuOnClickOutside(event) {
+    const dropdown = document.getElementById('user-dropdown');
+    const avatar = document.querySelector('.user-avatar');
+    
+    if (dropdown && avatar && !dropdown.contains(event.target) && !avatar.contains(event.target)) {
+        dropdown.classList.remove('show');
+        document.removeEventListener('click', closeUserMenuOnClickOutside);
+    }
+}
+
+/**
+ * Função para atualizar o avatar do usuário
+ */
+function updateUserAvatar() {
+    if (currentUser && currentUser.name) {
+        const initial = currentUser.name.charAt(0).toUpperCase();
+        const userInitialElement = document.getElementById('user-initial');
+        const userFullNameElement = document.getElementById('user-full-name');
+        const userNameElement = document.getElementById('user-name');
+        
+        if (userInitialElement) {
+            userInitialElement.textContent = initial;
+        }
+        if (userFullNameElement) {
+            userFullNameElement.textContent = currentUser.name;
+        }
+        if (userNameElement) {
+            userNameElement.textContent = currentUser.name;
+        }
+    }
+}
+
 function logout() {
     // Evitar múltiplas execuções de logout
     if (AppState.isLoggingOut) {
@@ -1281,6 +1334,9 @@ function showDashboard() {
             userNameElement.textContent = displayName;
             console.log('✅ Nome do usuário atualizado:', displayName);
         }
+        
+        // Atualizar avatar do usuário
+        updateUserAvatar();
         
         // Mostrar aba do dashboard e carregar dados
         console.log('🔄 Ativando aba do dashboard...');
@@ -2085,17 +2141,35 @@ async function loadClientsForContract() {
  * - Exibe na interface com opções de edição/exclusão
  * - Atualiza lista em tempo real
  */
-async function loadContracts() {
+// Variáveis globais para paginação
+let currentPage = 1;
+let totalPages = 1;
+let totalContracts = 0;
+let currentSearch = '';
+
+async function loadContracts(page = 1, search = '') {
     try {
-        console.log('🔄 Carregando contratos...');
+        console.log('🔄 Carregando contratos...', { page, search });
         
-        // Limpar campo de busca
-        const searchInput = document.getElementById('contracts-search');
-        if (searchInput) {
-            searchInput.value = '';
+        // Atualizar variáveis globais
+        currentPage = page;
+        currentSearch = search;
+        
+        // Limpar campo de busca se não há pesquisa
+        if (!search) {
+            const searchInput = document.getElementById('contracts-search');
+            if (searchInput) {
+                searchInput.value = '';
+            }
         }
         
-        const response = await fetch('/contracts', {
+        // Construir URL com parâmetros de paginação
+        let url = `/contracts?page=${page}&limit=10`;
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
+        }
+        
+        const response = await fetch(url, {
             headers: {
                 'Authorization': `Bearer ${currentToken}`
             }
@@ -2107,11 +2181,20 @@ async function loadContracts() {
             const data = await response.json();
             console.log('📊 Dados recebidos:', data);
             
-            // Verificar se é um objeto com propriedade data (paginação)
+            // Extrair dados de paginação
             const contracts = data.data || data;
-            console.log('📋 Contratos para exibir:', contracts);
+            const pagination = data.pagination;
             
-            displayContracts(contracts);
+            if (pagination) {
+                totalPages = pagination.totalPages;
+                totalContracts = pagination.total;
+                currentPage = pagination.page;
+            }
+            
+            console.log('📋 Contratos para exibir:', contracts);
+            console.log('📊 Paginação:', { currentPage, totalPages, totalContracts });
+            
+            displayContracts(contracts, pagination);
         } else {
             console.error('❌ Erro ao carregar contratos:', response.status);
             const errorData = await response.json().catch(() => ({}));
@@ -2122,7 +2205,7 @@ async function loadContracts() {
     }
 }
 
-function displayContracts(contracts) {
+function displayContracts(contracts, pagination) {
     console.log('🎨 Exibindo contratos:', contracts);
     const container = document.getElementById('contracts-list');
     console.log('📦 Container encontrado:', container ? 'Sim' : 'Não');
@@ -2135,8 +2218,17 @@ function displayContracts(contracts) {
     
     console.log('📝 Gerando HTML para', contracts.length, 'contratos');
     
-    // Criar grid de cards
-    container.innerHTML = '<div class="contracts-grid"></div>';
+    // Criar container principal com paginação
+    container.innerHTML = `
+        <div class="contracts-content">
+            <div class="contracts-info">
+                <span class="contracts-count">Exibindo ${contracts.length} de ${totalContracts} contratos</span>
+            </div>
+            <div class="contracts-grid"></div>
+            <div class="pagination-container"></div>
+        </div>
+    `;
+    
     const grid = container.querySelector('.contracts-grid');
     
     const contractsHTML = contracts.map(contract => {
@@ -2194,8 +2286,194 @@ function displayContracts(contracts) {
     }).join('');
     
     grid.innerHTML = contractsHTML;
+    
+    // Criar componente de paginação
+    if (pagination && totalPages > 1) {
+        createPaginationComponent();
+    }
+    
     console.log('✅ Contratos exibidos em cards modernos');
 }
+
+/**
+ * Cria componente de paginação estilo Google
+ * - Mostra números de páginas com navegação inteligente e responsiva
+ * - Adapta-se automaticamente ao tamanho da tela
+ * - Botões de primeira/última página (condicionais)
+ * - Botões anterior/próximo
+ * - Números de páginas calculados dinamicamente
+ */
+function createPaginationComponent() {
+    const paginationContainer = document.querySelector('.pagination-container');
+    if (!paginationContainer) return;
+    
+    const screenWidth = window.innerWidth;
+    let paginationHTML = '<div class="pagination">';
+    
+    // Determinar quais botões mostrar baseado no tamanho da tela
+    const showFirstLastButtons = screenWidth > 480;
+    const showPrevNextButtons = screenWidth > 360;
+    
+    // Botão "Primeira página" (apenas em telas maiores)
+    if (showFirstLastButtons && currentPage > 1) {
+        paginationHTML += `
+            <button class="pagination-btn pagination-first" onclick="goToPage(1)" title="Primeira página">
+                <i class="fas fa-angle-double-left"></i>
+            </button>
+        `;
+    }
+    
+    // Botão "Página anterior"
+    if (showPrevNextButtons && currentPage > 1) {
+        paginationHTML += `
+            <button class="pagination-btn pagination-prev" onclick="goToPage(${currentPage - 1})" title="Página anterior">
+                <i class="fas fa-angle-left"></i>
+            </button>
+        `;
+    }
+    
+    // Calcular quais números de páginas mostrar
+    const pageNumbers = calculatePageNumbers(currentPage, totalPages);
+    
+    // Números de páginas
+    pageNumbers.forEach(pageNum => {
+        if (pageNum === '...') {
+            const showEllipsis = screenWidth > 640; // Só mostrar reticências em telas maiores
+            if (showEllipsis) {
+                paginationHTML += '<span class="pagination-ellipsis">...</span>';
+            }
+        } else {
+            const isActive = pageNum === currentPage ? 'active' : '';
+            paginationHTML += `
+                <button class="pagination-btn pagination-number ${isActive}" onclick="goToPage(${pageNum})" title="Página ${pageNum}">
+                    ${pageNum}
+                </button>
+            `;
+        }
+    });
+    
+    // Botão "Próxima página"
+    if (showPrevNextButtons && currentPage < totalPages) {
+        paginationHTML += `
+            <button class="pagination-btn pagination-next" onclick="goToPage(${currentPage + 1})" title="Próxima página">
+                <i class="fas fa-angle-right"></i>
+            </button>
+        `;
+    }
+    
+    // Botão "Última página" (apenas em telas maiores)
+    if (showFirstLastButtons && currentPage < totalPages) {
+        paginationHTML += `
+            <button class="pagination-btn pagination-last" onclick="goToPage(${totalPages})" title="Última página">
+                <i class="fas fa-angle-double-right"></i>
+            </button>
+        `;
+    }
+    
+    paginationHTML += '</div>';
+    paginationContainer.innerHTML = paginationHTML;
+}
+
+/**
+ * Calcula quais números de páginas mostrar na paginação
+ * Implementa lógica responsiva inteligente baseada no tamanho da tela
+ */
+function calculatePageNumbers(currentPage, totalPages) {
+    const pages = [];
+    const screenWidth = window.innerWidth;
+    
+    // Determinar quantos números mostrar baseado no tamanho da tela
+    let maxVisibleNumbers;
+    if (screenWidth <= 360) {
+        maxVisibleNumbers = 1; // Apenas página atual
+    } else if (screenWidth <= 480) {
+        maxVisibleNumbers = 3; // Atual + 2 adjacentes
+    } else if (screenWidth <= 640) {
+        maxVisibleNumbers = 5; // Atual + 4 adjacentes
+    } else if (screenWidth <= 768) {
+        maxVisibleNumbers = 7; // Atual + 6 adjacentes
+    } else {
+        maxVisibleNumbers = 9; // Atual + 8 adjacentes (desktop)
+    }
+    
+    if (totalPages <= maxVisibleNumbers) {
+        // Se há poucas páginas, mostrar todas
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(i);
+        }
+    } else {
+        // Lógica inteligente baseada na posição da página atual
+        const halfVisible = Math.floor(maxVisibleNumbers / 2);
+        
+        if (currentPage <= halfVisible + 1) {
+            // Páginas iniciais
+            for (let i = 1; i <= maxVisibleNumbers - 1; i++) {
+                pages.push(i);
+            }
+            if (maxVisibleNumbers < 7) {
+                pages.push('...');
+            }
+            pages.push(totalPages);
+        } else if (currentPage >= totalPages - halfVisible) {
+            // Páginas finais
+            pages.push(1);
+            if (maxVisibleNumbers < 7) {
+                pages.push('...');
+            }
+            for (let i = totalPages - maxVisibleNumbers + 2; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            // Páginas do meio
+            pages.push(1);
+            if (maxVisibleNumbers < 7) {
+                pages.push('...');
+            }
+            
+            const startPage = Math.max(2, currentPage - halfVisible + 1);
+            const endPage = Math.min(totalPages - 1, currentPage + halfVisible - 1);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                pages.push(i);
+            }
+            
+            if (maxVisibleNumbers < 7) {
+                pages.push('...');
+            }
+            pages.push(totalPages);
+        }
+    }
+    
+    return pages;
+}
+
+/**
+ * Navega para uma página específica
+ */
+function goToPage(page) {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+        loadContracts(page, currentSearch);
+    }
+}
+
+/**
+ * Recria a paginação quando a tela é redimensionada
+ */
+function recreatePaginationOnResize() {
+    if (totalPages > 1) {
+        const paginationContainer = document.querySelector('.pagination-container');
+        if (paginationContainer) {
+            createPaginationComponent();
+        }
+    }
+}
+
+// Listener para redimensionamento da janela
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(recreatePaginationOnResize, 150);
+});
 
 /**
  * Converte código de status para texto legível
@@ -3095,22 +3373,8 @@ async function loadContractsWithSearch(search) {
         const container = document.getElementById('contracts-list');
         container.innerHTML = '<div class="no-data">Buscando contratos...</div>';
         
-        const response = await fetch(`/contracts?search=${encodeURIComponent(search)}`, {
-            headers: { 'Authorization': `Bearer ${currentToken}` }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            console.log('📊 Dados recebidos da pesquisa:', data);
-            
-            // Verificar se é um objeto com propriedade data (paginação)
-            const contracts = data.data || data;
-            console.log('✅ Contratos encontrados:', contracts.length);
-            displayContracts(contracts);
-        } else {
-            console.error('❌ Erro ao buscar contratos:', response.status);
-            container.innerHTML = '<div class="no-data">Erro ao buscar. Tente novamente.</div>';
-        }
+        // Usar a função loadContracts que já implementa paginação
+        await loadContracts(1, search);
     } catch (error) {
         console.error('❌ Erro na busca:', error);
         const container = document.getElementById('contracts-list');

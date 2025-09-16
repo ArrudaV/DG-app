@@ -423,6 +423,9 @@ body {
 .header-left {
     flex: 1;
     max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .search-container {
@@ -3196,21 +3199,23 @@ body.loading * {
     }
     
     .main-header {
-        flex-direction: column;
+        flex-direction: row;
         gap: var(--spacing-md);
         padding: var(--spacing-md);
         height: auto;
         min-height: 80px;
+        align-items: center;
     }
     
     .header-left {
-        max-width: 100%;
-        width: 100%;
+        flex: 1;
+        max-width: none;
     }
     
     .header-right {
-        width: 100%;
-        justify-content: space-between;
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
     }
     
     .user-info {
@@ -4032,5 +4037,568 @@ a:focus {
     .contracts-table-container {
         box-shadow: none;
         border: 1px solid #000;
+    }
+}
+
+/* ========================================
+   COMPONENTE DE PAGINAÇÃO
+   ======================================== */
+
+/* Container principal da paginação */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--spacing-xl);
+    padding: var(--spacing-lg);
+}
+
+/* Informações sobre os contratos */
+.contracts-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.contracts-count {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Componente de paginação */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: var(--white);
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+}
+
+/* Botões de paginação */
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--gray-300);
+    background: var(--white);
+    color: var(--gray-700);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.pagination-btn:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.pagination-btn:active {
+    transform: translateY(0);
+}
+
+/* Botão ativo (página atual) */
+.pagination-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
+    font-weight: 600;
+}
+
+.pagination-btn.active:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: var(--white);
+}
+
+/* Botões de navegação (setas) */
+.pagination-btn i {
+    font-size: 0.8rem;
+}
+
+/* Números de páginas */
+.pagination-number {
+    font-weight: 500;
+}
+
+/* Reticências (...) */
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    color: var(--gray-500);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Estados especiais dos botões */
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-400);
+}
+
+.pagination-btn:disabled:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--gray-400);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ========================================
+   RESPONSIVIDADE AVANÇADA DA PAGINAÇÃO
+   ======================================== */
+
+/* Tablet e telas médias (1024px - 769px) */
+@media (max-width: 1024px) {
+    .pagination-container {
+        padding: var(--spacing-md);
+    }
+    
+    .pagination {
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .pagination-btn {
+        min-width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+    }
+    
+    .pagination-ellipsis {
+        min-width: 38px;
+        height: 38px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Tablet pequeno (768px - 641px) */
+@media (max-width: 768px) {
+    .pagination-container {
+        padding: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
+    }
+    
+    .pagination {
+        gap: 4px;
+        padding: var(--spacing-xs);
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+    }
+    
+    .pagination-btn {
+        min-width: 36px;
+        height: 36px;
+        padding: var(--spacing-xs);
+        font-size: 0.85rem;
+        flex-shrink: 0;
+    }
+    
+    .pagination-ellipsis {
+        min-width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    
+    /* Estratégia de paginação inteligente para tablet */
+    .pagination-btn.pagination-number {
+        display: none;
+    }
+    
+    /* Mostrar apenas página atual e 2 adjacentes */
+    .pagination-btn.pagination-number.active {
+        display: flex;
+    }
+    
+    .pagination-btn.pagination-number.active + .pagination-btn.pagination-number,
+    .pagination-btn.pagination-number.active + .pagination-btn.pagination-number + .pagination-btn.pagination-number {
+        display: flex;
+    }
+    
+    /* Sempre mostrar botões de navegação */
+    .pagination-btn:not(.pagination-number) {
+        display: flex;
+    }
+    
+    /* Mostrar reticências quando necessário */
+    .pagination-ellipsis {
+        display: flex;
+    }
+    
+    .contracts-info {
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .contracts-count {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+}
+
+/* Mobile grande (640px - 481px) */
+@media (max-width: 640px) {
+    .pagination-container {
+        padding: var(--spacing-xs);
+        margin-top: var(--spacing-md);
+    }
+    
+    .pagination {
+        gap: 3px;
+        padding: 6px;
+        justify-content: center;
+        flex-wrap: nowrap;
+    }
+    
+    .pagination-btn {
+        min-width: 34px;
+        height: 34px;
+        font-size: 0.8rem;
+    }
+    
+    .pagination-ellipsis {
+        min-width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
+    }
+    
+    /* Mostrar apenas página atual + 1 adjacente */
+    .pagination-btn.pagination-number:not(.active) {
+        display: none;
+    }
+    
+    .pagination-btn.pagination-number.active + .pagination-btn.pagination-number {
+        display: flex;
+    }
+    
+    /* Esconder reticências em telas pequenas */
+    .pagination-ellipsis {
+        display: none;
+    }
+    
+    .contracts-count {
+        font-size: 0.8rem;
+    }
+}
+
+/* Mobile pequeno (480px e abaixo) */
+@media (max-width: 480px) {
+    .pagination-container {
+        padding: 4px;
+        margin-top: var(--spacing-sm);
+    }
+    
+    .pagination {
+        gap: 2px;
+        padding: 4px;
+        min-width: 280px;
+        justify-content: space-between;
+    }
+    
+    .pagination-btn {
+        min-width: 32px;
+        height: 32px;
+        padding: 2px;
+        font-size: 0.75rem;
+    }
+    
+    .pagination-ellipsis {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    /* Estratégia ultra-compacta: apenas navegação + página atual */
+    .pagination-btn.pagination-number:not(.active) {
+        display: none;
+    }
+    
+    .pagination-ellipsis {
+        display: none;
+    }
+    
+    /* Mostrar botões de primeira/última página apenas se necessário */
+    .pagination-btn:first-of-type,
+    .pagination-btn:last-of-type {
+        display: none;
+    }
+    
+    /* Mostrar apenas anterior/próximo + página atual */
+    .pagination-btn:nth-child(2),
+    .pagination-btn:nth-child(3),
+    .pagination-btn:nth-last-child(2),
+    .pagination-btn:nth-last-child(3) {
+        display: flex;
+    }
+    
+    .contracts-info {
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .contracts-count {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+}
+
+/* Mobile muito pequeno (360px e abaixo) */
+@media (max-width: 360px) {
+    .pagination-container {
+        padding: 2px;
+    }
+    
+    .pagination {
+        gap: 1px;
+        padding: 2px;
+        min-width: 260px;
+    }
+    
+    .pagination-btn {
+        min-width: 30px;
+        height: 30px;
+        font-size: 0.7rem;
+    }
+    
+    .contracts-count {
+        font-size: 0.7rem;
+    }
+}
+
+/* Orientação landscape em mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .pagination-container {
+        margin-top: var(--spacing-sm);
+        padding: var(--spacing-xs);
+    }
+    
+    .pagination {
+        gap: 4px;
+        padding: var(--spacing-xs);
+    }
+    
+    .pagination-btn {
+        min-width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+    
+    /* Mostrar mais números em landscape */
+    .pagination-btn.pagination-number.active,
+    .pagination-btn.pagination-number.active + .pagination-btn.pagination-number,
+    .pagination-btn.pagination-number.active + .pagination-btn.pagination-number + .pagination-btn.pagination-number,
+    .pagination-btn.pagination-number.active + .pagination-btn.pagination-number + .pagination-btn.pagination-number + .pagination-btn.pagination-number {
+        display: flex;
+    }
+}
+
+/* Melhorias de acessibilidade e usabilidade */
+@media (prefers-reduced-motion: reduce) {
+    .pagination-btn {
+        transition: none;
+    }
+    
+    .pagination-btn:hover {
+        transform: none;
+    }
+}
+
+/* Touch-friendly para dispositivos com touch */
+@media (hover: none) and (pointer: coarse) {
+    .pagination-btn {
+        min-width: 44px;
+        height: 44px;
+        font-size: 0.9rem;
+    }
+    
+    .pagination-btn:hover {
+        transform: none;
+        background: var(--white);
+        border-color: var(--gray-300);
+        color: var(--gray-700);
+    }
+    
+    .pagination-btn:active {
+        background: var(--primary-light);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+}
+
+/* ========================================
+   VLIBRAS PLUGIN
+   ======================================== */
+
+/* VLibras Plugin */
+.vw-access-button {
+    right: 10px !important;
+    bottom: 10px !important;
+    z-index: 9999 !important;
+    filter: brightness(0.95);
+}
+
+.vw-plugin-wrapper {
+    z-index: 9999 !important;
+}
+
+.vw-plugin-top-wrapper {
+    background-color: #0e0e0e !important;
+    box-shadow: none;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    .vw-access-button {
+        right: 10px !important;
+        bottom: 10px !important;
+    }
+}
+
+/* ========================================
+   USER AVATAR E DROPDOWN
+   ======================================== */
+
+.user-avatar-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 2px solid var(--white);
+}
+
+.user-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.user-avatar span {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--gray-200);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.user-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.user-dropdown-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.user-dropdown-header span {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 14px;
+}
+
+.user-dropdown-actions {
+    padding: 12px 20px 16px;
+}
+
+.user-dropdown-actions .logout-btn {
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--danger-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.user-dropdown-actions .logout-btn:hover {
+    background: var(--danger-dark);
+    transform: translateY(-1px);
+}
+
+/* Esconder user-info no mobile e desktop */
+.desktop-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .main-header {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .header-left {
+        gap: 10px;
+        flex: 1;
+        max-width: none;
+    }
+    
+    .header-right {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+    }
+    
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .user-avatar span {
+        font-size: 14px;
+    }
+    
+    .user-dropdown {
+        min-width: 180px;
+        right: -10px;
     }
 }
